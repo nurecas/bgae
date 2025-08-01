@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Generative Art Poll</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #poll {
+            text-align: center;
+        }
+
+        #poll h1 {
+            font-size: 2em;
+            margin-bottom: 1em;
+        }
+
+        .option {
+            display: block;
+            background: none;
+            border: 2px solid #00aaff;
+            color: #00aaff;
+            padding: 0.75em 1.5em;
+            margin: 0.5em auto;
+            width: 360px;
+            font-size: 1.2em;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .option:hover {
+            background: #00aaff;
+            color: #000;
+        }
+
+        /* Modal */
+        #modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 10;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #modalContent {
+            color: #00aaff;
+            font-size: 2em;
+            background: #111;
+            padding: 2em 3em;
+            border-radius: 1em;
+            border: 2px solid #00aaff;
+            box-shadow: 0 2px 24px #00aaff44;
+            font-weight: bold;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="poll">
+        <h1>Best generative art series ever</h1>
+        <div id="options"></div>
+    </div>
+    <!-- Modal -->
+    <div id="modal">
+        <div id="modalContent">TRIGGERED!</div>
+    </div>
+    <script>
+        // Embedded artist-series data
+        const data = [{
+                artist: "Asendorf",
+                series: "Monogrids"
+            },
+            {
+                artist: "Caesuras (Reas)",
+                series: "CSRSNT"
+            },
+            {
+                artist: "Zancan",
+                series: "The Lushtemples"
+            },
+            {
+                artist: "Snowfro",
+                series: "Chromie Squiggle"
+            },
+            {
+                artist: "Tyler Hobbs",
+                series: "Fidenza"
+            },
+            {
+                artist: "Dmitri Cherniak",
+                series: "Ringers"
+            },
+            {
+                artist: "Emily Xie",
+                series: "Interwoven"
+            },
+            {
+                artist: "Marcelo Soria Rodríguez",
+                series: "Slowing Down"
+            },
+            {
+                artist: "Sarah Ridgley",
+                series: "Ateliers"
+            },
+            {
+                artist: "Kaoru Tanaka",
+                series: "Inhabitants"
+            },
+            {
+                artist: "Sofia Crespo",
+                series: "Biotic Life"
+            },
+            {
+                artist: "Manolo Gamboa Naon",
+                series: "Plastic Experimentation"
+            },
+            {
+                artist: "Holger Lippmann",
+                series: "Generative Painting"
+            },
+            {
+                artist: "Matt DesLauriers",
+                series: "Subscapes"
+            },
+            {
+                artist: "Lars Wander",
+                series: "Screen Coordinates"
+            },
+            {
+                artist: "Piter Pasma",
+                series: "Skulptuur"
+            },
+            {
+                artist: "Harvey Rayner",
+                series: "Fontana"
+            },
+            {
+                artist: "Per Kristian Stoveland",
+                series: "Anticyclone"
+            },
+            {
+                artist: "Rich Poole",
+                series: "Stipple Sunsets"
+            },
+            {
+                artist: "Kjetil Golid",
+                series: "Archetype"
+            },
+            {
+                artist: "Jeff Davis",
+                series: "Construction Token"
+            },
+            {
+                artist: "Melissa Wiederrecht",
+                series: "Sudfah"
+            },
+            {
+                artist: "Leander Herzog",
+                series: "Fontana"
+            },
+            {
+                artist: "Lia",
+                series: "Filament Sculptures"
+            },
+            {
+                artist: "Andreas Rau",
+                series: "Singularity"
+            },
+            {
+                artist: "Rosaline D.",
+                series: "Hyperbolic"
+            },
+            {
+                artist: "Penelope Umbrico",
+                series: "Sunsets from Flickr"
+            },
+            {
+                artist: "Marius Watz",
+                series: "Generator.x"
+            },
+            {
+                artist: "Reas",
+                series: "Process"
+            }
+            // ...extend to 100 as needed!
+        ];
+
+        // Get last "word" from artist (second name)
+        function getSecondName(artist) {
+            // Remove any parens and trim
+            artist = artist.replace(/\(.*?\)/g, '').trim();
+            const words = artist.split(' ');
+            return words[words.length - 1];
+        }
+
+        // Always includes 'Other - comment below'
+        function getRandomOptions() {
+            let shuffled = data
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3); // pick 3
+            shuffled.push({
+                artist: "Other",
+                series: "comment below"
+            });
+            return shuffled;
+        }
+
+        function renderOptions(list) {
+            const container = document.getElementById('options');
+            container.innerHTML = '';
+            list.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option';
+                // Format: SecondName, Artwork
+                let text;
+                if (opt.artist === "Other") {
+                    text = "Other - comment below";
+                } else {
+                    text = `${getSecondName(opt.artist)}, ${opt.series}`;
+                }
+                btn.textContent = text;
+                btn.title = text; // Hover tooltip for full text
+                btn.onclick = () => {
+                    if (opt.artist === "Other") {
+                        showModal();
+                    } else {
+                        regenerate();
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function regenerate() {
+            renderOptions(getRandomOptions());
+        }
+
+        // Modal logic
+        function showModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                regenerate();
+            }, 5000);
+        }
+
+        // On load, show first poll as in screenshot (only series names)
+        renderOptions([{
+                artist: "Asendorf",
+                series: "Monogrids"
+            },
+            {
+                artist: "Caesuras (Reas)",
+                series: "CSRSNT"
+            },
+            {
+                artist: "Zancan",
+                series: "The Lushtemples"
+            },
+            {
+                artist: "Other",
+                series: "comment below"
+            }
+        ]);
+
+    </script>
+</body>
+
+</html>
