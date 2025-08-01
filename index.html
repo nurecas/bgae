@@ -4,25 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Best Generative Artist Ever!!!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        html,
         body {
             margin: 0;
-            height: 100vh;
+            padding: 0;
+            min-height: 100vh;
+            width: 100vw;
             background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: #fff;
             font-family: 'Arial', sans-serif;
         }
 
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         #poll {
+            width: 100vw;
+            max-width: 400px;
+            padding: 16px 8px;
             text-align: center;
         }
 
         #poll h1 {
             font-size: 2em;
             margin-bottom: 1em;
+            word-break: break-word;
         }
 
         .option {
@@ -30,10 +42,12 @@
             background: none;
             border: 2px solid #00aaff;
             color: #00aaff;
-            padding: 0.75em 1.5em;
-            margin: 0.5em auto;
-            width: 360px;
-            font-size: 1.2em;
+            padding: 0.8em 1.2em;
+            margin: 0.6em auto;
+            width: 100%;
+            max-width: 360px;
+            min-width: 0;
+            font-size: 1.15em;
             border-radius: 999px;
             cursor: pointer;
             transition: background 0.2s, color 0.2s;
@@ -44,12 +58,12 @@
             box-sizing: border-box;
         }
 
-        .option:hover {
+        .option:hover,
+        .option:active {
             background: #00aaff;
             color: #000;
         }
 
-        /* Modal */
         #modal {
             display: none;
             position: fixed;
@@ -57,7 +71,7 @@
             top: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 10;
             align-items: center;
             justify-content: center;
@@ -73,6 +87,25 @@
             box-shadow: 0 2px 24px #00aaff44;
             font-weight: bold;
             text-align: center;
+            max-width: 88vw;
+        }
+
+        @media (max-width: 600px) {
+            #poll {
+                max-width: 98vw;
+                padding: 7vw 0;
+            }
+
+            .option {
+                font-size: 1em;
+                padding: 0.9em 0.2em;
+                max-width: 98vw;
+            }
+
+            #modalContent {
+                font-size: 1.25em;
+                padding: 1em 0.6em;
+            }
         }
 
     </style>
@@ -83,13 +116,12 @@
         <h1>Best generative art series ever</h1>
         <div id="options"></div>
     </div>
-    <!-- Modal -->
     <div id="modal">
         <div id="modalContent">TRIGGERED!</div>
     </div>
     <script>
-        // Embedded artist-series data
-        const data = [{
+        // 100 artist-series pairs
+        const data = [ /* ...same 100-entry data as before... */ {
                 artist: "Asendorf",
                 series: "Monogrids"
             },
@@ -503,20 +535,16 @@
             }
         ];
 
-
-        // Get last "word" from artist (second name)
         function getSecondName(artist) {
-            // Remove any parens and trim
             artist = artist.replace(/\(.*?\)/g, '').trim();
             const words = artist.split(' ');
             return words[words.length - 1];
         }
 
-        // Always includes 'Other - comment below'
         function getRandomOptions() {
             let shuffled = data
                 .sort(() => 0.5 - Math.random())
-                .slice(0, 3); // pick 3
+                .slice(0, 3);
             shuffled.push({
                 artist: "Other",
                 series: "comment below"
@@ -530,7 +558,6 @@
             list.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option';
-                // Format: SecondName, Artwork
                 let text;
                 if (opt.artist === "Other") {
                     text = "Other - comment below";
@@ -538,7 +565,7 @@
                     text = `${getSecondName(opt.artist)}, ${opt.series}`;
                 }
                 btn.textContent = text;
-                btn.title = text; // Hover tooltip for full text
+                btn.title = text;
                 btn.onclick = () => {
                     if (opt.artist === "Other") {
                         showModal();
@@ -554,7 +581,6 @@
             renderOptions(getRandomOptions());
         }
 
-        // Modal logic
         function showModal() {
             const modal = document.getElementById('modal');
             modal.style.display = 'flex';
@@ -563,8 +589,6 @@
                 regenerate();
             }, 5000);
         }
-
-        // On load, show first poll 
         renderOptions(getRandomOptions());
 
     </script>
